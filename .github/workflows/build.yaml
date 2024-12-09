@@ -3,15 +3,11 @@ on:
   push:
     branches:
     - main
+    - develop
 
     paths:
-    # Only rebuild website when apps have changed
-    - 'water-bodies/**'
-    - .github/**
-    - docs/**
-    - cwl-workflow/*.cwl
-    - codemeta.json
-    - practice-labs/**
+    # Only rebuild container when Dockerfile has changed
+    - Dockerfile
     
 jobs:
 
