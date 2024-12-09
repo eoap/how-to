@@ -25,6 +25,8 @@ $graph:
 
 - class: CommandLineTool
   id: rio
+  label: Rasterio command line tool
+  doc: Convert a GeoTIFF file to a PNG file using rio convert
   requirements:
     NetworkAccess:
       networkAccess: true
