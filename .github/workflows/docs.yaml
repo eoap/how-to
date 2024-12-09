@@ -33,7 +33,7 @@ jobs:
       - run: pip install mkdocs-material mkdocs-mermaid2-plugin mkdocs-jupyter bash_kernel cwltool
       - run: sudo apt update && sudo apt install -y graphviz wget
       - run: |
-            sudo wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq &&\
+            sudo wget https://github.com/mikefarah/yq/releases/download/v4.44.6/yq_linux_386 -O /usr/bin/yq &&\
             sudo chmod +x /usr/bin/yq
       - run: python -m bash_kernel.install
       - run: mkdocs gh-deploy --force
