@@ -1,0 +1,31 @@
+name: Docker-in-Docker Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  dind-job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+
+    - name: Start Docker Daemon
+      run: |
+        sudo systemctl start docker
+
+    - name: Build and Run Docker Image
+      run: |
+        pip install cwltool
+        cwltool cwl/01-output/return-output-file.cwl --tif "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/10/T/FK/2021/7/S2B_10TFK_20210713_0_L2A/TCI.tif" 
