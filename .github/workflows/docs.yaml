@@ -24,6 +24,6 @@ jobs:
         with:
           python-version: 3.x
       - run: pip install mkdocs-material mkdocs-mermaid2-plugin mkdocs-jupyter bash_kernel cwltool
-      - run: sudo apt update && apt install -y graphviz
+      - run: sudo apt update && sudo apt install -y graphviz
       - run: python -m bash_kernel.install
       - run: mkdocs gh-deploy --force
