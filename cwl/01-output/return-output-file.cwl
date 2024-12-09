@@ -6,10 +6,14 @@ $graph:
   inputs:
     tif: 
       type: string
+      label: URL to a Sentinel-2 TCI GeoTIFF
+      doc: URL to a Sentinel-2 True Colour Image GeoTIFF file (TCI.tif)
   outputs:
     preview: 
       outputSource: step-convert/preview
       type: File
+      label: True Colour Image preview 
+      doc: True Colour Image preview in PNG format
   steps:
     step-convert:
       in: 
