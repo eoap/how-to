@@ -1,0 +1,48 @@
+name: build
+on:
+  push:
+    branches:
+    - main
+
+    paths:
+    # Only rebuild website when apps have changed
+    - 'water-bodies/**'
+    - .github/**
+    - docs/**
+    - cwl-workflow/*.cwl
+    - codemeta.json
+    - practice-labs/**
+    
+jobs:
+
+  version:
+
+    runs-on: ubuntu-latest
+
+    outputs:
+
+      app-version: ${{ steps.set-version.outputs.version }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - run: echo "APP_VERSION=$(cat codemeta.json | jq -r .version )" >> $GITHUB_ENV
+    - run: echo app version is $APP_VERSION
+    - id: set-version
+      run: echo "::set-output name=version::$APP_VERSION"
+
+  container-build:
+
+    needs: version
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2   
+    - run: echo version ${{needs.version.outputs.app-version}}
+    - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: build & push image
+      run: |
+        IMAGE_ID=ghcr.io/eoap/how-to/how-to-container
+        docker build . --file Dockerfile --tag how-to-container
+        docker tag how-to-container $IMAGE_ID:${{needs.version.outputs.app-version}}
+        docker push $IMAGE_ID:${{needs.version.outputs.app-version}}
