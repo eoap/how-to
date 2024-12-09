@@ -7,15 +7,15 @@ $graph:
     tif: 
       type: string
   outputs:
-    preview: 
-      outputSource: step-convert/preview
-      type: File
+    info: 
+      outputSource: step-info/info
+      type: string
   steps:
-    step-convert:
+    step-info:
       in: 
         geotif: tif
       out: 
-      - preview
+      - info
       run:
         "#rio"
 
@@ -29,18 +29,16 @@ $graph:
       dockerPull: ghcr.io/eoap/how-to/how-to-container:1.1.0
   baseCommand: rio
   arguments: 
-  - convert
-  - --driver
-  - PNG 
-  - --dtype
-  - uint8
+  - info
   - $(inputs.geotif)
-  - preview.png
   inputs:
     geotif:
       type: string
+  stdout: message
   outputs:
-    preview: 
-      type: File
+    info: 
+      type: string
       outputBinding:
-        glob: preview.png
+        glob: message
+        loadContents: true
+        outputEval: $(self[0].contents)
