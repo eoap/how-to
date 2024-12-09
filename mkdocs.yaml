@@ -22,6 +22,8 @@ plugins:
   - mkdocs-jupyter:
       execute: true
       kernel_name: bash
+      show_input: False
+      no_input: True
 
 markdown_extensions:
   - pymdownx.details
