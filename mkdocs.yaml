@@ -21,6 +21,7 @@ plugins:
       version: 10.6.0
   - mkdocs-jupyter:
       execute: true
+      kernel_name: bash
 
 markdown_extensions:
   - pymdownx.details
