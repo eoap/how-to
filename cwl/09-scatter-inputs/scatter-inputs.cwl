@@ -22,7 +22,7 @@ $graph:
       type: string
       default: "blue"
   outputs:
-    rgb-png:
+    rgb-tif:
       outputSource: step_color/rgb
       type: File
   steps:

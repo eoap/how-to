@@ -16,8 +16,8 @@ $graph:
       type: string[]
       default: ["red", "green", "blue"]
   outputs:
-    rgb-png:
-      outputSource: step_rgb_composite/rgb-png
+    rgb-tif:
+      outputSource: step_rgb_composite/rgb-tif
       type: File[]
   steps:
     step_rgb_composite:
@@ -25,7 +25,7 @@ $graph:
         stac-item: stac-items
         bands: bands
       out: 
-      - rgb-png
+      - rgb-tif
       run:
         "#rgb-composite"
       scatter: stac-item
@@ -44,7 +44,7 @@ $graph:
     bands:
       type: string[]
   outputs:
-    rgb-png:
+    rgb-tif:
       outputSource: step_color/rgb
       type: File
   steps:

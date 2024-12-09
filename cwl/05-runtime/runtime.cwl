@@ -14,7 +14,7 @@ $graph:
     bands:
       type: string[]
   outputs:
-    rgb-png:
+    rgb-tif:
       outputSource: step_color/rgb
       type: File
   steps:
