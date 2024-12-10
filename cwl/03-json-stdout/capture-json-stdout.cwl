@@ -13,9 +13,12 @@ $graph:
     common-band-name:
       type: string
   outputs:
-    tif:
+    preview:
       outputSource: step_translate/preview
       type: File
+    json_output:
+      outputSource: step_stac/asset
+      type: Any
   steps:
     step_stac:
       in: 
@@ -70,7 +73,7 @@ $graph:
           let redKey = Object.keys(inputs.asset).find(key => 
               inputs.asset[key]['eo:bands'] && 
               inputs.asset[key]['eo:bands'].length === 1 &&
-              inputs.asset[key]['eo:bands'].some(band => band.common_name === "red")
+              inputs.asset[key]['eo:bands'].some(band => band.common_name === inputs.common_band_name)
           );
           return inputs.asset[redKey].href;
       }
