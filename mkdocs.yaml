@@ -61,5 +61,13 @@ nav:
   - Introduction: 'index.md'
   - How to return an output file: return-output-file.ipynb
   - How to capture the stdout: capture-stdout.ipynb
+  - How to capture JSON stdout and re-use it: capture-json-stdout.ipynb
+  - How to set environment variables: environment-variable.ipynb
+  - How to create a file at runtime: runtime-file.ipynb
+  - How to create nested workflows: nested-workflows.ipynb
+  - How to scatter workflows: scatter-workflows.ipynb
+  - How to create conditional workflows: conditional-workflows.ipynb
+  - How to scatter on input parameters: scatter-input-parameters.ipynb
+
 
 copyright: <a href="https://img.shields.io/badge/License-CC_BY--SA_4.0-lightgrey.svg">License CC BY-SA 4.0</a>, by <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons</a>
