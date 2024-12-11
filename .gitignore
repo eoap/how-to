@@ -1,3 +1,5 @@
 *.tif
 *.png
 rgb.tif*
+output.json
+TODOs.md
