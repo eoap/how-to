@@ -43,12 +43,13 @@ $graph:
     DockerRequirement: 
       dockerPull: docker.io/curlimages/curl:latest
   baseCommand: curl
-  stdout: message
   arguments: 
+  - -s
   - $( inputs.stac_item )
   inputs:
     stac_item:
       type: string
+  stdout: message
   outputs:
     asset: 
       type: Any
