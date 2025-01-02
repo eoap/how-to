@@ -6,10 +6,10 @@ on:
     - develop
 
     paths:
-    # Only rebuild container when Dockerfile has changed
     - Dockerfile
     - codemeta.json
-    
+    - .github/**
+
 jobs:
 
   version:
@@ -112,7 +112,7 @@ jobs:
         for cwl in $(ls cwl-workflows/*.cwl)
         do
           temp=$( echo $cwl | cut -d'.' -f1 )
-          cp cwl-workflow/${cwl} downloads/${temp}.${{needs.version.outputs.app-version}}.cwl
+          cp ${cwl} downloads/${temp}.${{needs.version.outputs.app-version}}.cwl
         done
     - uses: actions/upload-artifact@v4
       with:
