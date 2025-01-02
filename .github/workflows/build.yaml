@@ -80,40 +80,28 @@ jobs:
 
     strategy:
       matrix:
-        step: ["rio"]
+        step: [capture-json-stdout capture-stdout conditional-workflows environment-variable nested-workflow return-output-file runtime-file scatter-input-parameters scatter-workflows]
 
     steps:
     - uses: actions/checkout@v2
     - run: |
-        for step in rio
-        do
-          tag="ghcr.io/eoap/how-to/${step}:${{needs.version.outputs.app-version}}"
-          docker pull ${tag}
-          shatag=$( docker inspect ${tag} | yq -r '.[0]["RepoDigests"][0]' )
-          for cwl in $(ls cwl-workflows/*.cwl)
-          do
-            s="${step}" t="${shatag}" yq -i eval '(.$graph[] | select (.id == env(s)) ).hints.DockerRequirement.dockerPull = env(t)' $cwl
-          done
-        done
+        container=rio
+        tag="ghcr.io/eoap/how-to/${container}:${{needs.version.outputs.app-version}}"
+        docker pull ${tag}
+        shatag=$( docker inspect ${tag} | yq -r '.[0]["RepoDigests"][0]' )
+        s="${container}" t="${shatag}" yq -i eval '(.$graph[] | select (.id == env(s)) ).hints.DockerRequirement.dockerPull = env(t)' ${{matrix.step}}.cwl
     - run: |
-        for cwl in $(ls cwl-workflows/*.cwl)
-        do
-          r=$( cat codemeta.json | jq -r ".codeRepository" ) yq -i eval '."s:codeRepository" = {"URL" : env(r)}' $cwl
-          v="${{needs.version.outputs.app-version}}" yq -i eval '."s:softwareVersion" = env(v)' $cwl
-          n=$(cat codemeta.json | jq -r '(.author[0].givenName + " " + .author[0].familyName)') \
-          e=$(cat codemeta.json | jq -r '.author[0].email') \
-          a=$(cat codemeta.json | jq -r '.author[0].affiliation["name"]') \
-          yq eval -i  '."s:author" += [{"class": "s:Person", "s.name": env(n), "s.email": env(e), "s.affiliation": env(a)}]' $cwl
-        done
+        r=$( cat codemeta.json | jq -r ".codeRepository" ) yq -i eval '."s:codeRepository" = {"URL" : env(r)}' ${{matrix.step}}.cwl
+        v="${{needs.version.outputs.app-version}}" yq -i eval '."s:softwareVersion" = env(v)' ${{matrix.step}}.cwl
+        n=$(cat codemeta.json | jq -r '(.author[0].givenName + " " + .author[0].familyName)') \
+        e=$(cat codemeta.json | jq -r '.author[0].email') \
+        a=$(cat codemeta.json | jq -r '.author[0].affiliation["name"]') \
+        yq eval -i  '."s:author" += [{"class": "s:Person", "s.name": env(n), "s.email": env(e), "s.affiliation": env(a)}]' ${{matrix.step}}.cwl
     - name: Cleanup downloads folder
       run: rm -rf downloads/*
     - run: |
         mkdir downloads
-        for cwl in $(ls cwl-workflows/*.cwl)
-        do
-          temp=$( basename $cwl | cut -d'.' -f1 )
-          cp ${cwl} downloads/${temp}.${{needs.version.outputs.app-version}}.cwl
-        done
+        cp cwl-workflows/${{matrix.step}}.cwl downloads/${{matrix.step}}.${{needs.version.outputs.app-version}}.cwl
     - uses: actions/upload-artifact@v4
       with:
         name: application-package-${{matrix.step}}
