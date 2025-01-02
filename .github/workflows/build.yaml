@@ -8,6 +8,7 @@ on:
     paths:
     # Only rebuild container when Dockerfile has changed
     - Dockerfile
+    - codemeta.json
     
 jobs:
 
