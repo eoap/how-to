@@ -89,14 +89,14 @@ jobs:
         tag="ghcr.io/eoap/how-to/${container}:${{needs.version.outputs.app-version}}"
         docker pull ${tag}
         shatag=$( docker inspect ${tag} | yq -r '.[0]["RepoDigests"][0]' )
-        s="${container}" t="${shatag}" yq -i eval '(.$graph[] | select (.id == env(s)) ).hints.DockerRequirement.dockerPull = env(t)' ${{matrix.step}}.cwl
+        s="${container}" t="${shatag}" yq -i eval '(.$graph[] | select (.id == env(s)) ).hints.DockerRequirement.dockerPull = env(t)' cwl-workflows/${{matrix.step}}.cwl
     - run: |
-        r=$( cat codemeta.json | jq -r ".codeRepository" ) yq -i eval '."s:codeRepository" = {"URL" : env(r)}' ${{matrix.step}}.cwl
-        v="${{needs.version.outputs.app-version}}" yq -i eval '."s:softwareVersion" = env(v)' ${{matrix.step}}.cwl
+        r=$( cat codemeta.json | jq -r ".codeRepository" ) yq -i eval '."s:codeRepository" = {"URL" : env(r)}' cwl-workflows/${{matrix.step}}.cwl
+        v="${{needs.version.outputs.app-version}}" yq -i eval '."s:softwareVersion" = env(v)' cwl-workflows/${{matrix.step}}.cwl
         n=$(cat codemeta.json | jq -r '(.author[0].givenName + " " + .author[0].familyName)') \
         e=$(cat codemeta.json | jq -r '.author[0].email') \
         a=$(cat codemeta.json | jq -r '.author[0].affiliation["name"]') \
-        yq eval -i  '."s:author" += [{"class": "s:Person", "s.name": env(n), "s.email": env(e), "s.affiliation": env(a)}]' ${{matrix.step}}.cwl
+        yq eval -i  '."s:author" += [{"class": "s:Person", "s.name": env(n), "s.email": env(e), "s.affiliation": env(a)}]' cwl-workflows/${{matrix.step}}.cwl
     - name: Cleanup downloads folder
       run: rm -rf downloads/*
     - run: |
