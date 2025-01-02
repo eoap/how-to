@@ -111,7 +111,7 @@ jobs:
         mkdir downloads
         for cwl in $(ls cwl-workflows/*.cwl)
         do
-          temp=$( echo $cwl | cut -d'.' -f1 )
+          temp=$( basename $cwl | cut -d'.' -f1 )
           cp ${cwl} downloads/${temp}.${{needs.version.outputs.app-version}}.cwl
         done
     - uses: actions/upload-artifact@v4
