@@ -90,7 +90,7 @@ $graph:
   id: rio_stack
   requirements:
     DockerRequirement: 
-      dockerPull: ghcr.io/eoap/how-to/how-to-container:1.1.0
+      dockerPull: ghcr.io/eoap/how-to/rio:1.0.0
     EnvVarRequirement:
       envDef:
         GDAL_TIFF_INTERNAL_MASK: YES
@@ -125,7 +125,7 @@ $graph:
   id: rio_color
   requirements:
     DockerRequirement: 
-      dockerPull: ghcr.io/eoap/how-to/how-to-container:1.1.0
+      dockerPull: ghcr.io/eoap/how-to/rio:1.0.0
     InitialWorkDirRequirement:
       listing:
         - entryname: run.sh
