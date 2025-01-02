@@ -85,12 +85,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: |
+        set -x
         container=rio
         tag="ghcr.io/eoap/how-to/${container}:${{needs.version.outputs.app-version}}"
         docker pull ${tag}
         shatag=$( docker inspect ${tag} | yq -r '.[0]["RepoDigests"][0]' )
         s="${container}" t="${shatag}" yq -i eval '(.$graph[] | select (.id == env(s)) ).hints.DockerRequirement.dockerPull = env(t)' cwl-workflows/${{matrix.step}}.cwl
     - run: |
+        set -x
         r=$( cat codemeta.json | jq -r ".codeRepository" ) yq -i eval '."s:codeRepository" = {"URL" : env(r)}' cwl-workflows/${{matrix.step}}.cwl
         v="${{needs.version.outputs.app-version}}" yq -i eval '."s:softwareVersion" = env(v)' cwl-workflows/${{matrix.step}}.cwl
         n=$(cat codemeta.json | jq -r '(.author[0].givenName + " " + .author[0].familyName)') \
@@ -100,6 +102,7 @@ jobs:
     - name: Cleanup downloads folder
       run: rm -rf downloads/*
     - run: |
+        set -x
         mkdir downloads
         cp cwl-workflows/${{matrix.step}}.cwl downloads/${{matrix.step}}.${{needs.version.outputs.app-version}}.cwl
     - uses: actions/upload-artifact@v4
