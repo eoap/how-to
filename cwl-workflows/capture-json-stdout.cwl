@@ -61,7 +61,7 @@ $graph:
   id: rio
   requirements:
     DockerRequirement: 
-      dockerPull: ghcr.io/eoap/how-to/how-to-container:1.1.0
+      dockerPull: ghcr.io/eoap/how-to/rio:1.0.0
   baseCommand: rio
   arguments:
   - convert 

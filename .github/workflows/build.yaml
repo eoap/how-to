@@ -80,7 +80,7 @@ jobs:
 
     strategy:
       matrix:
-        step: [capture-json-stdout capture-stdout conditional-workflows environment-variable nested-workflow return-output-file runtime-file scatter-input-parameters scatter-workflows]
+        step: ["capture-json-stdout", "capture-stdout", "conditional-workflows", "environment-variable", "nested-workflow", "return-output-file", "runtime-file", "scatter-input-parameters", "scatter-workflows"]
 
     steps:
     - uses: actions/checkout@v2
@@ -90,7 +90,7 @@ jobs:
         tag="ghcr.io/eoap/how-to/${container}:${{needs.version.outputs.app-version}}"
         docker pull ${tag}
         shatag=$( docker inspect ${tag} | yq -r '.[0]["RepoDigests"][0]' )
-        s="${container}" t="${shatag}" yq -i eval '(.$graph[] | select (.id == env(s)) ).hints.DockerRequirement.dockerPull = env(t)' cwl-workflows/${{matrix.step}}.cwl
+        s="${container}" t="${shatag}" yq -i eval '(.$graph[] | select (.id == env(s)) ).requirements.DockerRequirement.dockerPull = env(t)' cwl-workflows/${{matrix.step}}.cwl
     - run: |
         set -x
         r=$( cat codemeta.json | jq -r ".codeRepository" ) yq -i eval '."s:codeRepository" = {"URL" : env(r)}' cwl-workflows/${{matrix.step}}.cwl
