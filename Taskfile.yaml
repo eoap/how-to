@@ -5,10 +5,20 @@ includes:
 
 tasks:
 
-  test:
+  all-workflows:
   - task: remote:test
 
-  test-capture-json-stdout:
+  capture-json-stdout:
   - task: remote:test-by-index
     vars:
       VAR: 0
+
+  conditional-native:
+  - task: remote:test-by-index
+    vars:
+      VAR: 7
+
+  conditional-epsg-4326:
+  - task: remote:test-by-index
+    vars:
+      VAR: 8
