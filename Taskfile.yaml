@@ -1,11 +1,14 @@
 version: '3'
 
 includes:
-  remote: https://raw.githubusercontent.com/eoap/task-files/c750354651eed547cc310aa7a856921e77ebc058/build-test/Taskfile.yaml
+  remote: https://github.com/eoap/task-files/raw/refs/heads/main/build-test/Taskfile.yaml
 
 tasks:
-  build:
-  - task: remote:build
 
   test:
   - task: remote:test
+
+  test-capture-json-stdout:
+  - task: remote:test-by-index
+    vars:
+      VAR: 0

@@ -33,6 +33,7 @@ pool_logs_basepath = "logs"
 max_ram = "4G"
 max_cores = 8
 pod_serviceaccount = "calrissian-sa"
+tool_logs_basepath = "logs"
 
 [workflows.tests.execution.paths]
 volume = "/calrissian/how-to/capture-json-stdout"
