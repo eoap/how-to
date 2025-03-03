@@ -17,7 +17,7 @@ secret = "kaniko-secret"
 
 
 [[workflows]]
-path = "cwl-workflows/cwl-workflows/capture-json-stdout.cwl"
+path = "cwl-workflows/capture-json-stdout.cwl"
 
 [[workflows.tests]]
 name = "capture-json-stdout-test-"
