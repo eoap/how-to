@@ -36,4 +36,17 @@ The Application Packages are found in the repository releases: https://github.co
 
 The documentation is available here: https://eoap.github.io/how-to/
 
+### Using taskfile
+
+You can use **Taskfile** to run the workflows on the cluster.
+
+Example: 
+
+```
+task capture-json-stdout
+```
+
+will run the workflow `capture-json-stdout.cwl`
+
+
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC_BY--SA_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
