@@ -1,0 +1,163 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://www.terradue.com/eoap/v1/project.yaml"
+title: "Project"
+description: "A configuration schema to represent a TOML project"
+type: object
+properties:
+  project:
+    $ref: "#/$defs/Project"
+  build:
+    $ref: "#/$defs/Build"
+  workflows:
+    type: array
+    items:
+      $ref: "#/$defs/Workflow"
+
+$defs:
+
+  Project:
+    type: object
+    required:
+    - name
+    - version
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+
+  Build:
+    type: object
+    required:
+    - engine
+    properties:
+      engine:
+        type: string
+        enum:
+        - cluster
+        - local
+      cluster:
+        $ref: "#/$defs/ClusterInfo"
+      local:
+        $ref: "#/$defs/LocalInfo"
+
+  ClusterInfo:
+    type: object
+    required:
+    - namespace
+    - registry
+    - secret
+    - serviceAccount
+    properties:
+      namespace:
+        type: string
+      registry:
+        type: string
+        format: uri
+      secret:
+        type: string
+      serviceAccount:
+        type: string
+
+  LocalInfo:
+    type: object
+    required:
+    - runtime
+    - registry
+    properties:
+      runtime:
+        type: string
+      registry:
+        type: string
+        format: uri
+
+  Workflow:
+    type: object
+    required:
+    - path
+    - tests
+    properties:
+      path:
+        type: string
+        format: uri
+      tests:
+        type: array
+        items:
+          $ref: "#/$defs/Test"
+
+  Test:
+    type: object
+    required:
+    - name
+    - execution
+    - params
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      execution:
+        $ref: "#/$defs/Execution"
+      params:
+        type: object
+        additionalProperties: true
+
+  Execution:
+    type: object
+    required:
+    - paths
+    properties:
+      cluster:
+        $ref: "#/$defs/Cluster"
+      local:
+        $ref: "#/$defs/Local"
+      paths:
+        $ref: "#/$defs/Paths"
+
+  Cluster:
+    type: object
+    required:
+    - max_cores
+    - max_ram
+    - pod_serviceaccount
+    - pool_logs_basepath
+    - tool_logs_basepath
+    - usage_report
+    properties:
+      max_cores:
+        type: integer
+      max_ram:
+        type: string
+      pod_serviceaccount:
+        type: string
+      pool_logs_basepath:
+        type: string
+      tool_logs_basepath:
+        type: string
+      usage_report:
+        type: string
+        format: uri
+
+  Local:
+    type: object
+
+  Paths:
+    type: object
+    required:
+    - outdir
+    - stderr
+    - stdout
+    - tmp_outdir_prefix
+    - volume
+    properties:
+      outdir:
+        type: string
+      stderr:
+        type: string
+      stdout:
+        type: string
+      tmp_outdir_prefix:
+        type: string
+      volume:
+        type: string
+        format: uri
