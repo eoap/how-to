@@ -13,3 +13,4 @@ rbac.yaml
 .settings
 .task
 project.toml.json
+.pydevproject
