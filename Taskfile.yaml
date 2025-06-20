@@ -8,10 +8,40 @@ tasks:
   all-workflows:
   - task: remote:test
 
-  capture-json-stdout:
+  return-output-file: 
   - task: remote:test-by-index
     vars:
       VAR: 0
+
+  capture-stdout: 
+  - task: remote:test-by-index
+    vars:
+      VAR: 1
+
+  capture-json-stdout:
+  - task: remote:test-by-index
+    vars:
+      VAR: 2
+
+  environment-variable:
+  - task: remote:test-by-index
+    vars:
+      VAR: 3
+
+  runtime-file:
+  - task: remote:test-by-index
+    vars:
+      VAR: 4
+
+  nested-workflow:
+  - task: remote:test-by-index
+    vars:
+      VAR: 5
+
+  scatter-workflows:
+  - task: remote:test-by-index
+    vars:
+      VAR: 6
 
   conditional-native:
   - task: remote:test-by-index
@@ -22,3 +52,8 @@ tasks:
   - task: remote:test-by-index
     vars:
       VAR: 8
+
+  scatter-input-parameters:
+  - task: remote:test-by-index
+    vars:
+      VAR: 9
