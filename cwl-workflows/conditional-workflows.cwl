@@ -112,8 +112,8 @@ $graph:
       dockerPull: ghcr.io/eoap/how-to/rio:1.0.0
     EnvVarRequirement:
       envDef:
-        GDAL_TIFF_INTERNAL_MASK: YES
-        GDAL_HTTP_MERGE_CONSECUTIVE_RANGES: YES
+        GDAL_TIFF_INTERNAL_MASK: "YES"
+        GDAL_HTTP_MERGE_CONSECUTIVE_RANGES: "YES"
         CPL_VSIL_CURL_ALLOWED_EXTENSIONS: ".tif"
     InitialWorkDirRequirement:
       listing:
@@ -147,8 +147,8 @@ $graph:
       dockerPull: ghcr.io/eoap/how-to/rio:1.0.0
     EnvVarRequirement:
       envDef:
-        GDAL_TIFF_INTERNAL_MASK: YES
-        GDAL_HTTP_MERGE_CONSECUTIVE_RANGES: YES
+        GDAL_TIFF_INTERNAL_MASK: "YES"
+        GDAL_HTTP_MERGE_CONSECUTIVE_RANGES: "YES"
         CPL_VSIL_CURL_ALLOWED_EXTENSIONS: ".tif"
     InitialWorkDirRequirement:
       listing:

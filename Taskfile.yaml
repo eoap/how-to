@@ -5,6 +5,35 @@ includes:
 
 tasks:
 
+  # schema
+
+  conditional-pip-install:
+    internal: true
+    status:
+    - command -v {{.COMMAND}}
+    cmds:
+    - pip install {{.COMMAND}}
+
+  install_tomlq:
+    internal: true
+    status:
+    - command -v tomlq
+    cmds:
+    - cargo install tomlq
+
+  check-toml:
+    desc: Executes a strict project.toml JSON schema check
+    deps:
+    - task: install_tomlq
+    - task: conditional-pip-install
+      vars:
+        COMMAND: check-jsonschema
+    cmds:
+    - tq --output json --pretty --file ./project.toml '.' > ./project.toml.json
+    - check-jsonschema --schemafile ./schemas/project.schema.yaml ./project.toml.json
+
+  # workflow
+
   all-workflows:
   - task: remote:test
 
@@ -57,3 +86,5 @@ tasks:
   - task: remote:test-by-index
     vars:
       VAR: 9
+
+

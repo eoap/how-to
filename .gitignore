@@ -8,3 +8,9 @@ TODOs.md
 input.yml
 *old*.ipynb
 rbac.yaml
+
+.project
+.settings
+.task
+project.toml.json
+.pydevproject
