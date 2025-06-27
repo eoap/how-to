@@ -6,7 +6,7 @@ schemas:
   - http://schema.org/version/9.0/schemaorg-current-http.rdf
 $graph:
   - class: Workflow
-    id: water-bodies
+    id: main
     label: Water bodies detection based on NDWI and otsu threshold
     doc: Water bodies detection based on NDWI and otsu threshold applied to Sentinel-2 COG STAC items
     requirements:
@@ -106,6 +106,10 @@ $graph:
     id: crop
     requirements:
       InlineJavascriptRequirement: {}
+      SchemaDefRequirement:
+        types:
+        - $import: https://raw.githubusercontent.com/eoap/schemas/main/url.yaml
+        - $import: https://raw.githubusercontent.com/eoap/schemas/main/ogc.yaml
       EnvVarRequirement:
         envDef:
           PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -132,13 +136,13 @@ $graph:
         type: https://raw.githubusercontent.com/eoap/schemas/main/url.yaml#URL
         inputBinding:
           prefix: --input-item
-          valueFrom: $( inputs.item.ref )
+          valueFrom: $( inputs.item.href )
       aoi:
         type: https://raw.githubusercontent.com/eoap/schemas/main/ogc.yaml#BBox
         inputBinding:
           prefix: --aoi
           valueFrom: |
-            { return inputs.aoi.bbox.join(","); }
+            ${ return inputs.aoi.bbox.join(","); }
       band:
         type: string
         inputBinding:
@@ -204,6 +208,9 @@ $graph:
     id: stac
     requirements:
       InlineJavascriptRequirement: {}
+      SchemaDefRequirement:
+        types:
+        - $import: https://raw.githubusercontent.com/eoap/schemas/main/url.yaml
       EnvVarRequirement:
         envDef:
           PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -215,20 +222,22 @@ $graph:
       DockerRequirement:
         dockerPull: ghcr.io/eoap/mastering-app-package/stac@sha256:e2ee1914cd06a0abc369034a8c8ef9ecf9b8e872b2efbc864d41c741e9faa392
     baseCommand: ["python", "-m", "app"]
-    arguments: []
+    arguments: 
+    # uses javascript to extract the hrefs from the array of URLs prepended with --input-item
+    - valueFrom: 
+        ${ 
+          var arr = [];
+          for(var i=0; i<inputs.item.length; i++) {
+              arr.push("--input-item");
+              arr.push(inputs.item[i].href); 
+          }
+          return arr; 
+        }
     inputs:
       item:
         type:
           type: array
           items: https://raw.githubusercontent.com/eoap/schemas/main/url.yaml#URL
-          inputBinding:
-            prefix: --input-item
-            valueFrom: |
-              ${
-                return inputs.item.map(function(u) {
-                  return u.ref;
-                });
-              }
       rasters:
         type:
           type: array
