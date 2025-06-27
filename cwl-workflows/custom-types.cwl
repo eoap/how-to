@@ -14,7 +14,7 @@ $graph:
       - class: SubworkflowFeatureRequirement
       - class: SchemaDefRequirement
         types:
-        - $import: https://raw.githubusercontent.com/eoap/schemas/main/url.yaml
+        - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
         - $import: https://raw.githubusercontent.com/eoap/schemas/main/ogc.yaml
     inputs:
       aoi:
@@ -25,7 +25,7 @@ $graph:
         label: Sentinel-2 STAC items
         doc: list of Sentinel-2 COG STAC items
         type:
-          items: https://raw.githubusercontent.com/eoap/schemas/main/url.yaml#URL
+          items: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
           type: array
       bands:
         label: bands used for the NDWI
@@ -71,7 +71,7 @@ $graph:
         type: string[]
       item:
         doc: STAC item
-        type: https://raw.githubusercontent.com/eoap/schemas/main/url.yaml#URL
+        type: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
     outputs:
       - id: detected_water_body
         outputSource:
@@ -108,7 +108,7 @@ $graph:
       InlineJavascriptRequirement: {}
       SchemaDefRequirement:
         types:
-        - $import: https://raw.githubusercontent.com/eoap/schemas/main/url.yaml
+        - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
         - $import: https://raw.githubusercontent.com/eoap/schemas/main/ogc.yaml
       EnvVarRequirement:
         envDef:
@@ -133,10 +133,10 @@ $graph:
           }
     inputs:
       item:
-        type: https://raw.githubusercontent.com/eoap/schemas/main/url.yaml#URL
+        type: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
         inputBinding:
           prefix: --input-item
-          valueFrom: $( inputs.item.href )
+          valueFrom: $( inputs.item.value )
       aoi:
         type: https://raw.githubusercontent.com/eoap/schemas/main/ogc.yaml#BBox
         inputBinding:
@@ -210,7 +210,7 @@ $graph:
       InlineJavascriptRequirement: {}
       SchemaDefRequirement:
         types:
-        - $import: https://raw.githubusercontent.com/eoap/schemas/main/url.yaml
+        - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       EnvVarRequirement:
         envDef:
           PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -229,7 +229,7 @@ $graph:
           var arr = [];
           for(var i=0; i<inputs.item.length; i++) {
               arr.push("--input-item");
-              arr.push(inputs.item[i].href); 
+              arr.push(inputs.item[i].value); 
           }
           return arr; 
         }
@@ -237,7 +237,7 @@ $graph:
       item:
         type:
           type: array
-          items: https://raw.githubusercontent.com/eoap/schemas/main/url.yaml#URL
+          items: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       rasters:
         type:
           type: array

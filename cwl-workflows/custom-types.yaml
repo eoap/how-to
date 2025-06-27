@@ -1,7 +1,7 @@
 stac_items:
-  - {"class": "https://raw.githubusercontent.com/eoap/schemas/main/url.yaml#URL", "href": "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2A_10TFK_20210708_0_L2A"}
-  - {"class": "https://raw.githubusercontent.com/eoap/schemas/main/url.yaml#URL", "href": "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_10TFK_20210713_0_L2A"}
-  - {"class": "https://raw.githubusercontent.com/eoap/schemas/main/url.yaml#URL", "href": "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2A_10TFK_20210718_0_L2A"}
+  - {"class": "https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI", "value": "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2A_10TFK_20210708_0_L2A"}
+  - {"class": "https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI", "value": "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_10TFK_20210713_0_L2A"}
+  - {"class": "https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI", "value": "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2A_10TFK_20210718_0_L2A"}
 
 aoi: {"class": "https://raw.githubusercontent.com/eoap/schemas/main/bbox.yaml#BBOX", "bbox": [-121.399, 39.834, -120.74, 40.472], "crs": "CRS84"}
 bands:
