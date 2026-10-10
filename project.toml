@@ -24,12 +24,12 @@ name = "return-output-file-test"
 description = "Test case for returning an output file"
 
 [workflows.tests.params]
-tif = "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/10/T/FK/2021/7/S2B_10TFK_20210713_0_L2A/TCI.tif"
+tif = { value = "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/10/T/FK/2021/7/S2B_10TFK_20210713_0_L2A/TCI.tif" }
 
 [workflows.tests.execution.cluster]
 usage_report = "usage.json"
 pool_logs_basepath = "logs"
-max_ram = "4G"
+max_ram = "8G"
 max_cores = 8
 pod_serviceaccount = "calrissian-sa"
 tool_logs_basepath = "logs"
@@ -50,12 +50,12 @@ name = "capture-stdout-test"
 description = "Test case for capture stdout"
 
 [workflows.tests.params]
-tif = "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/10/T/FK/2021/7/S2B_10TFK_20210713_0_L2A/TCI.tif"
+tif = { value = "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/10/T/FK/2021/7/S2B_10TFK_20210713_0_L2A/TCI.tif" }
 
 [workflows.tests.execution.cluster]
 usage_report = "usage.json"
 pool_logs_basepath = "logs"
-max_ram = "4G"
+max_ram = "8G"
 max_cores = 8
 pod_serviceaccount = "calrissian-sa"
 tool_logs_basepath = "logs"
@@ -77,13 +77,13 @@ name = "capture-json-stdout-test"
 description = "Test case for capture json stdout"
 
 [workflows.tests.params]
-stac-item = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A"
+stac-item = { value = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A" }
 common-band-name = "red"
 
 [workflows.tests.execution.cluster]
 usage_report = "usage.json"
 pool_logs_basepath = "logs"
-max_ram = "4G"
+max_ram = "8G"
 max_cores = 8
 pod_serviceaccount = "calrissian-sa"
 tool_logs_basepath = "logs"
@@ -106,13 +106,13 @@ name = "environment-variable-test"
 description = "Test case for environment variables"
 
 [workflows.tests.params]
-stac-item = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A"
+stac-item = { value = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A" }
 bands = ["red", "green", "blue" ]
 
 [workflows.tests.execution.cluster]
 usage_report = "usage.json"
 pool_logs_basepath = "logs"
-max_ram = "4G"
+max_ram = "8G"
 max_cores = 8
 pod_serviceaccount = "calrissian-sa"
 tool_logs_basepath = "logs"
@@ -134,13 +134,13 @@ name = "runtime-file-test"
 description = "Test case for runtime files"
 
 [workflows.tests.params]
-stac-item = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A"
+stac-item = { value = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A" }
 bands = ["red", "green", "blue" ]
 
 [workflows.tests.execution.cluster]
 usage_report = "usage.json"
 pool_logs_basepath = "logs"
-max_ram = "4G"
+max_ram = "8G"
 max_cores = 8
 pod_serviceaccount = "calrissian-sa"
 tool_logs_basepath = "logs"
@@ -161,12 +161,12 @@ name = "nested-workflow-test"
 description = "Test case for nested workflows"
 
 [workflows.tests.params]
-stac-item = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A"
+stac-item = { value = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A" }
 
 [workflows.tests.execution.cluster]
 usage_report = "usage.json"
 pool_logs_basepath = "logs"
-max_ram = "4G"
+max_ram = "8G"
 max_cores = 8
 pod_serviceaccount = "calrissian-sa"
 tool_logs_basepath = "logs"
@@ -188,13 +188,13 @@ name = "scatter-workflows-test"
 description = "Test case for scatter workflows"
 
 [workflows.tests.params]
-stac-items = ["https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A", "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2A_53HPA_20210728_0_L2A"]
+stac-items = [{ value = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A" }, { value = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2A_53HPA_20210728_0_L2A" }]
 bands = ["red", "green", "blue" ]
 
 [workflows.tests.execution.cluster]
 usage_report = "usage.json"
 pool_logs_basepath = "logs"
-max_ram = "4G"
+max_ram = "8G"
 max_cores = 8
 pod_serviceaccount = "calrissian-sa"
 tool_logs_basepath = "logs"
@@ -216,14 +216,14 @@ name = "conditional-workflows-test-native"
 description = "Test case for conditional-workflows - native"
 
 [workflows.tests.params]
-"stac-item" = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A"
+"stac-item" = { value = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A" }
 "bands" = ["red", "green", "blue" ]
 "epsg_code" = "native"
 
 [workflows.tests.execution.cluster]
 usage_report = "usage.json"
 pool_logs_basepath = "logs"
-max_ram = "4G"
+max_ram = "8G"
 max_cores = 8
 pod_serviceaccount = "calrissian-sa"
 tool_logs_basepath = "logs"
@@ -244,14 +244,14 @@ name = "conditional-workflows-test-epsg-4326"
 description = "Test case for conditional-workflows - epsg:4326"
 
 [workflows.tests.params]
-"stac-item" = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A"
+"stac-item" = { value = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A" }
 "bands" = ["red", "green", "blue" ]
-"epsg_code" = "EPSG:4326"
+"epsg_code" = "EPSG4326"
 
 [workflows.tests.execution.cluster]
 usage_report = "usage.json"
 pool_logs_basepath = "logs"
-max_ram = "4G"
+max_ram = "8G"
 max_cores = 8
 pod_serviceaccount = "calrissian-sa"
 tool_logs_basepath = "logs"
@@ -272,14 +272,14 @@ name = "scatter-input-parameters-test"
 description = "Test case for scatter input parameters"
 
 [workflows.tests.params]
-"stac-item" = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A"
+"stac-item" = { value = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_53HPA_20210723_0_L2A" }
 "bands" = ["red", "green", "blue" ]
-"epsg_code" = "EPSG:4326"
+"epsg_code" = "EPSG4326"
 
 [workflows.tests.execution.cluster]
 usage_report = "usage.json"
 pool_logs_basepath = "logs"
-max_ram = "4G"
+max_ram = "8G"
 max_cores = 8
 pod_serviceaccount = "calrissian-sa"
 tool_logs_basepath = "logs"

@@ -7,13 +7,15 @@ name = "how-to"
 dynamic = ["version"]
 description = "Application Package CWL How-To's"
 readme = "README.md"
-license = "Apache-2.0"
+license = "CC-BY-SA-4.0"
 keywords = []
 
 authors = [
     { name = "Fabrice Brito", email = "fabrice.brito@terradue.com" }
 ]
+requires-python = ">=3.11"
 dependencies = [
+    "PyYAML",
     "cwltool",
     "ipykernel",
     "bash_kernel",

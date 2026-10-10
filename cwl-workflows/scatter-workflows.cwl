@@ -1,163 +1,352 @@
 cwlVersion: v1.2
-
 $graph:
 - class: Workflow
   id: main
-  requirements: 
+  requirements:
     SubworkflowFeatureRequirement: {}
     InlineJavascriptRequirement: {}
     NetworkAccess:
       networkAccess: true
     ScatterFeatureRequirement: {}
+    SchemaDefRequirement:
+      types:
+      - name: '#URI'
+        type: record
+        fields:
+        - name: value
+          type: string
+          doc: URI of the remote resource.
+      - name: '#SpectralBand'
+        type: enum
+        symbols:
+        - red
+        - green
+        - blue
+      - name: '#CRS'
+        type: enum
+        symbols:
+        - native
+        - EPSG4326
+      - name: '#JSONDocument'
+        type: record
+        fields:
+        - name: value
+          type: string
+          doc: Serialized JSON object.
   inputs:
-    stac-items: 
-      type: string[]
+    stac-items:
+      type:
+        type: array
+        items: '#URI'
+      label: stac items
+      doc: stac items.
     bands:
-      type: string[]
-      default: ["red", "green", "blue"]
+      type:
+        type: array
+        items: '#SpectralBand'
+      default:
+      - red
+      - green
+      - blue
+      label: bands
+      doc: bands.
   outputs:
     rgb-tif:
       outputSource: step_rgb_composite/rgb-tif
       type: File[]
+      label: rgb tif
+      doc: rgb tif.
   steps:
     step_rgb_composite:
-      in: 
+      in:
         stac-item: stac-items
         bands: bands
-      out: 
+      out:
       - rgb-tif
-      run:
-        "#rgb-composite"
+      run: '#rgb-composite'
       scatter: stac-item
       scatterMethod: dotproduct
-
+  label: main
+  doc: 'scatter workflows: main.'
 - class: Workflow
   id: rgb-composite
-  requirements: 
+  requirements:
     InlineJavascriptRequirement: {}
     NetworkAccess:
       networkAccess: true
     ScatterFeatureRequirement: {}
+    SchemaDefRequirement:
+      types:
+      - name: '#URI'
+        type: record
+        fields:
+        - name: value
+          type: string
+          doc: URI of the remote resource.
+      - name: '#SpectralBand'
+        type: enum
+        symbols:
+        - red
+        - green
+        - blue
+      - name: '#CRS'
+        type: enum
+        symbols:
+        - native
+        - EPSG4326
+      - name: '#JSONDocument'
+        type: record
+        fields:
+        - name: value
+          type: string
+          doc: Serialized JSON object.
   inputs:
-    stac-item: 
-      type: string
+    stac-item:
+      type: '#URI'
+      label: stac item
+      doc: stac item.
     bands:
-      type: string[]
+      type:
+        type: array
+        items: '#SpectralBand'
+      label: bands
+      doc: bands.
   outputs:
     rgb-tif:
       outputSource: step_color/rgb
       type: File
+      label: rgb tif
+      doc: rgb tif.
   steps:
     step_curl:
-      in: 
+      in:
         stac_item: stac-item
         common_band_name: bands
-      out: 
+      out:
       - hrefs
-      run:
-        "#stac"
+      run: '#stac'
       scatter: common_band_name
       scatterMethod: dotproduct
     step_stack:
       in:
-        tiffs: 
+        tiffs:
           source: step_curl/hrefs
       out:
       - stacked
-      run:
-        "#rio_stack"
+      run: '#rio_stack'
     step_color:
       in:
         stacked:
           source: step_stack/stacked
       out:
       - rgb
-      run:
-        "#rio_color"
-
+      run: '#rio_color'
+  label: rgb-composite
+  doc: 'scatter workflows: rgb-composite.'
 - class: CommandLineTool
   id: stac
   requirements:
-    DockerRequirement: 
+    DockerRequirement:
       dockerPull: docker.io/curlimages/curl:latest
+    InlineJavascriptRequirement: {}
+    NetworkAccess:
+      networkAccess: true
+    SchemaDefRequirement:
+      types:
+      - name: '#URI'
+        type: record
+        fields:
+        - name: value
+          type: string
+          doc: URI of the remote resource.
+      - name: '#SpectralBand'
+        type: enum
+        symbols:
+        - red
+        - green
+        - blue
+      - name: '#CRS'
+        type: enum
+        symbols:
+        - native
+        - EPSG4326
+      - name: '#JSONDocument'
+        type: record
+        fields:
+        - name: value
+          type: string
+          doc: Serialized JSON object.
   baseCommand: curl
   stdout: message
-  arguments: 
-  - $( inputs.stac_item )
+  arguments:
+  - --fail
+  - --location
+  - --retry
+  - '3'
+  - $( inputs.stac_item.value )
   inputs:
     stac_item:
-      type: string
+      type: '#URI'
+      label: stac item
+      doc: stac item.
     common_band_name:
-      type: string
+      type: '#SpectralBand'
+      label: common band name
+      doc: common band name.
   outputs:
-    hrefs: 
-      type: string
+    hrefs:
+      type: '#URI'
       outputBinding:
         glob: message
         loadContents: true
         outputEval: |
           ${
-            const assets = JSON.parse(self[0].contents).assets;
-            const bandKey = Object.keys(assets).find(key =>
-              assets[key]['eo:bands'] &&
-              assets[key]['eo:bands'].length === 1 &&
-              assets[key]['eo:bands'].some(band => band.common_name === inputs.common_band_name)
-            );
-            if (!bandKey) {
-              throw new Error(`No valid asset found for band: ${inputs.common_band_name}`);
+            var assets = JSON.parse(self[0].contents).assets;
+            var keys = Object.keys(assets);
+            var bandKey = null;
+            for (var i = 0; i < keys.length; i++) {
+              var bands = assets[keys[i]]["eo:bands"];
+              if (bands && bands.length === 1 && bands[0].common_name === inputs.common_band_name) {
+                bandKey = keys[i];
+                break;
+              }
             }
-            return assets[bandKey].href;
+            if (!bandKey) { throw new Error("No valid asset found for band: " + inputs.common_band_name); }
+            return {value: assets[bandKey].href};
           }
+      label: hrefs
+      doc: hrefs.
+  label: stac
+  doc: 'scatter workflows: stac.'
 - class: CommandLineTool
   id: rio_stack
   requirements:
-    DockerRequirement: 
+    DockerRequirement:
       dockerPull: ghcr.io/eoap/how-to/rio:1.0.0
     EnvVarRequirement:
       envDef:
-        GDAL_TIFF_INTERNAL_MASK: YES
-        GDAL_HTTP_MERGE_CONSECUTIVE_RANGES: YES
-        CPL_VSIL_CURL_ALLOWED_EXTENSIONS: ".tif"
+        GDAL_TIFF_INTERNAL_MASK: 'YES'
+        GDAL_HTTP_MERGE_CONSECUTIVE_RANGES: 'YES'
+        CPL_VSIL_CURL_ALLOWED_EXTENSIONS: .tif
+    InlineJavascriptRequirement: {}
+    NetworkAccess:
+      networkAccess: true
+    SchemaDefRequirement:
+      types:
+      - name: '#URI'
+        type: record
+        fields:
+        - name: value
+          type: string
+          doc: URI of the remote resource.
+      - name: '#SpectralBand'
+        type: enum
+        symbols:
+        - red
+        - green
+        - blue
+      - name: '#CRS'
+        type: enum
+        symbols:
+        - native
+        - EPSG4326
+      - name: '#JSONDocument'
+        type: record
+        fields:
+        - name: value
+          type: string
+          doc: Serialized JSON object.
+    ResourceRequirement:
+      coresMin: 1
+      ramMin: 2048
   baseCommand: rio
   arguments:
   - stack
-  - valueFrom: |
-      ${  
-        var arr = [];
-        for(var i=0; i<inputs.tiffs.length; i++) {
-            arr.push(inputs.tiffs[i]); 
-        }
-        return arr; 
-        }
+  - valueFrom: "${  \n  var arr = [];\n  for(var i=0; i<inputs.tiffs.length; i++) {\n      arr.push(inputs.tiffs[i].value);\
+      \ \n  }\n  return arr; \n  }\n"
   - stacked.tif
   inputs:
     tiffs:
-      type: string[]
+      type:
+        type: array
+        items: '#URI'
+      label: tiffs
+      doc: tiffs.
   outputs:
     stacked:
       type: File
       outputBinding:
         glob: stacked.tif
+      label: stacked
+      doc: stacked.
+  label: rio stack
+  doc: 'scatter workflows: rio stack.'
 - class: CommandLineTool
   id: rio_color
   requirements:
-    DockerRequirement: 
+    DockerRequirement:
       dockerPull: ghcr.io/eoap/how-to/rio:1.0.0
+    InlineJavascriptRequirement: {}
+    NetworkAccess:
+      networkAccess: true
+    SchemaDefRequirement:
+      types:
+      - name: '#URI'
+        type: record
+        fields:
+        - name: value
+          type: string
+          doc: URI of the remote resource.
+      - name: '#SpectralBand'
+        type: enum
+        symbols:
+        - red
+        - green
+        - blue
+      - name: '#CRS'
+        type: enum
+        symbols:
+        - native
+        - EPSG4326
+      - name: '#JSONDocument'
+        type: record
+        fields:
+        - name: value
+          type: string
+          doc: Serialized JSON object.
+    ResourceRequirement:
+      coresMin: 1
+      ramMin: 4096
   baseCommand: rio
   arguments:
   - color
   - -j
-  - "-1"
-  - --out-dtype 
+  - '-1'
+  - --out-dtype
   - uint8
   - $( inputs.stacked.path )
   - rgb.tif
-  - "gamma 3 0.95, sigmoidal rgb 35 0.13"
+  - gamma 3 0.95, sigmoidal rgb 35 0.13
   inputs:
     stacked:
       type: File
+      label: stacked
+      doc: stacked.
   outputs:
     rgb:
       type: File
       outputBinding:
         glob: rgb.tif
+      label: rgb
+      doc: rgb.
+  label: rio color
+  doc: 'scatter workflows: rio color.'
+$namespaces:
+  s: https://schema.org/
+s:softwareVersion: 1.0.0
+s:codeRepository: https://github.com/eoap/how-to
+s:license: https://spdx.org/licenses/CC-BY-SA-4.0.html
+s:author:
+- class: s:Person
+  s:name: Fabrice Brito
+  s:email: fabrice.brito@terradue.com
