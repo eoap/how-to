@@ -56,6 +56,7 @@ for workflow in config['workflows']:
                 for child in value:readable(child)
         readable(output)
         if name == 'custom-types-test':
+            import numpy
             import pystac
             import rasterio
             from rasterio.warp import transform_bounds
@@ -73,7 +74,7 @@ for workflow in config['workflows']:
                         bounds = transform_bounds(raster.crs, 'EPSG:4326', *raster.bounds)
                         expected = test['params']['aoi']['bbox']
                         assert all(abs(actual - target) < 0.02 for actual, target in zip(bounds, expected)), bounds
-                        values = set(raster.read(1, masked=True).compressed().tolist())
+                        values = set(numpy.unique(raster.read(1)).tolist())
                         assert values == {0, 1}, f'{item.id}: expected land and water, got {values}'
             (target / 'scientific-check.json').write_text(json.dumps({'items': len(items), 'binary_masks': True, 'aoi_matches': True}))
         print(f'PASSED {name}', flush=True)
