@@ -290,3 +290,20 @@ stdout = "results.json"
 stderr = "app.log"
 tmp_outdir_prefix = "tmp"
 outdir = "results"
+
+[[workflows]]
+path = "cwl-workflows/custom-types.cwl"
+
+[[workflows.tests]]
+name = "custom-types-test"
+description = "Detect water bodies across three real Sentinel-2 acquisitions using embedded URI and BBox records"
+
+[workflows.tests.params]
+stac_items = [{value = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2A_10TFK_20210708_0_L2A"}, {value = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_10TFK_20210713_0_L2A"}, {value = "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2A_10TFK_20210718_0_L2A"}]
+aoi = { bbox = [-121.399, 39.834, -120.74, 40.472], crs = "CRS84" }
+bands = ["green", "nir"]
+
+[workflows.tests.execution.cluster]
+max_ram = "8G"
+max_cores = 8
+pod_serviceaccount = "calrissian-sa"

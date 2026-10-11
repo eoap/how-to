@@ -55,6 +55,28 @@ for workflow in config['workflows']:
             elif isinstance(value,list):
                 for child in value:readable(child)
         readable(output)
+        if name == 'custom-types-test':
+            import numpy
+            import pystac
+            import rasterio
+            from rasterio.warp import transform_bounds
+            catalog_dir = Path(output['stac_catalog']['location'].removeprefix('file://'))
+            catalog = pystac.Catalog.from_file(str(catalog_dir / 'catalog.json'))
+            items = list(catalog.get_all_items())
+            assert len(items) == len(test['params']['stac_items']), 'Missing acquisitions in output catalog'
+            for item in items:
+                item.make_asset_hrefs_absolute()
+                assets = [asset for asset in item.assets.values() if asset.href.endswith('.tif')]
+                assert assets, f'{item.id}: no water-mask raster'
+                for asset in assets:
+                    with rasterio.open(asset.href) as raster:
+                        assert raster.crs and raster.count == 1
+                        bounds = transform_bounds(raster.crs, 'EPSG:4326', *raster.bounds)
+                        expected = test['params']['aoi']['bbox']
+                        assert all(abs(actual - target) < 0.02 for actual, target in zip(bounds, expected)), bounds
+                        values = set(numpy.unique(raster.read(1)).tolist())
+                        assert values == {0, 1}, f'{item.id}: expected land and water, got {values}'
+            (target / 'scientific-check.json').write_text(json.dumps({'items': len(items), 'binary_masks': True, 'aoi_matches': True}))
         print(f'PASSED {name}', flush=True)
 assert summary, 'No workflow cases selected'
 print(f'All {len(summary)} cases passed; evidence: {results}', flush=True)

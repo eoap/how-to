@@ -59,7 +59,7 @@ application document. URI inputs use `{value: "https://..."}`. The cases in
 Run `python scripts/cwl-docs.py --validate` to check metadata, documented ports,
 and isolated CWL documents and generate Markdown. This module-local generator
 is the equivalent documentation path; transpiler-mate compatibility is untested.
-Run `task workflows:kubernetes` in the PDE editor to execute the ten configured
+Run `task workflows:kubernetes` in the PDE editor to execute the eleven configured
 cases using the container's isolated Calrissian. Results, usage reports and logs
 are saved below `/calrissian/how-to/<UTC timestamp>/`. A failure stops the suite.
 The current user's UID/GID is inherited by Calrissian task pods.
@@ -68,12 +68,14 @@ Use the sibling dev-platform-eoap how-to deployment tasks for readiness,
 editor/S3 checks, and environment initialization on a selected Kubernetes
 context. Published releases include all standalone documents and typed test jobs.
 
-AMD64 Kubernetes acceptance on 11 October 2026 passed all ten workflow cases,
+AMD64 Kubernetes acceptance on 11 October 2026 passed the original ten workflow cases,
 standalone metadata/Markdown validation and deployment lifecycle checks.
 The CRS enum value `EPSG4326` binds to rasterio's `EPSG:4326` CLI value.
 
+The custom-types case additionally checks three STAC items, binary water masks, and raster bounds against the actual Lake Almanor area of interest.
+
 ## Reproducible release acceptance
 
-Install the Python 3.12 environment with `uv pip sync --require-hashes requirements-notebooks.txt`. Run `scripts/check-release.py` and `scripts/cwl-docs.py --validate`, then execute all ten cases with `python scripts/run-workflows.py`. Calrissian is the default; CI uses `--runner cwltool --output /tmp/how-to-acceptance` with Podman. Both use the same typed inputs in `project.toml` and pinned runtime images. Documentation notebooks use those typed jobs as well.
+Install the Python 3.12 environment with `uv pip sync --require-hashes requirements-notebooks.txt`. Run `scripts/check-release.py` and `scripts/cwl-docs.py --validate`, then execute all eleven cases with `python scripts/run-workflows.py`. Calrissian is the default; CI uses `--runner cwltool --output /tmp/how-to-acceptance` with Podman. Both use the same typed inputs in `project.toml` and pinned runtime images. Documentation notebooks use those typed jobs as well.
 
-Documentation builds render notebook instructions without executing remote processing. The acceptance workflow executes the ten real-data cases separately and saves their results and logs.
+Documentation builds render notebook instructions without executing remote processing. The acceptance workflow executes the eleven real-data cases separately and saves their results and logs.

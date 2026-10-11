@@ -32,7 +32,7 @@ jobs:
         run: .venv/bin/python scripts/check-release.py
       - name: Validate standalone CWL and generated Markdown
         run: .venv/bin/python scripts/cwl-docs.py --validate --output acceptance-results/cwl-docs
-      - name: Execute all ten cases with real EO inputs
+      - name: Execute all eleven cases with real EO inputs
         run: |
           source .venv/bin/activate
           python scripts/run-workflows.py --runner cwltool --output "$GITHUB_WORKSPACE/acceptance-results/workflows"
@@ -78,9 +78,9 @@ jobs:
       - name: Stage unchanged validated CWL and checksums
         run: |
           mkdir release-assets
-          cp cwl-workflows/*.cwl requirements-notebooks.txt project.toml release-assets/
+          cp cwl-workflows/*.cwl cwl-workflows/custom-types.yaml requirements-notebooks.txt project.toml release-assets/
           cd release-assets
-          sha256sum *.cwl requirements-notebooks.txt project.toml > SHA256SUMS
+          sha256sum *.cwl custom-types.yaml requirements-notebooks.txt project.toml > SHA256SUMS
       - name: Publish the stable release after all assets are ready
         run: |
           gh release create "$VERSION" release-assets/* --target "$GITHUB_SHA" --title "CWL How-To $VERSION" --notes-file RELEASE_NOTES.md

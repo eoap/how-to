@@ -58,6 +58,7 @@ extra_javascript:
 
 nav:
   - Introduction: 'index.md'
+  - How to define custom types: custom-types.md
   - How to return an output file: return-output-file.ipynb
   - How to capture the stdout: capture-stdout.ipynb
   - How to capture JSON stdout and re-use it: capture-json-stdout.ipynb
