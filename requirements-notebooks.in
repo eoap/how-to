@@ -7,3 +7,7 @@ ipykernel
 check-jsonschema
 yq
 cwltool
+mkdocs-material
+mkdocs-mermaid2-plugin
+mkdocs-jupyter
+bash_kernel
