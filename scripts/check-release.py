@@ -10,9 +10,9 @@ version = json.loads((root / 'codemeta.json').read_text())['version']
 assert re.fullmatch(r'\d+\.\d+\.\d+', version), version
 project = tomllib.loads((root / 'project.toml').read_text())
 assert project['project']['version'] == version
-assert sum(len(w.get('tests', [])) for w in project['workflows']) == 10
+assert sum(len(w.get('tests', [])) for w in project['workflows']) == 11
 files = sorted((root / 'cwl-workflows').glob('*.cwl'))
-assert len(files) == 9
+assert len(files) == 10
 for path in files:
     document = yaml.safe_load(path.read_text())
     assert document['cwlVersion'] == 'v1.2'
@@ -25,4 +25,4 @@ for path in files:
         elif isinstance(value, list):
             for child in value: check(child)
     check(document)
-print(f'{len(files)} standalone release packages match {version}; ten cases and immutable images verified')
+print(f'{len(files)} standalone release packages match {version}; eleven cases and immutable images verified')
