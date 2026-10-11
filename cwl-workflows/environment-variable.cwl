@@ -79,7 +79,7 @@ $graph:
   id: stac
   requirements:
     DockerRequirement:
-      dockerPull: docker.io/curlimages/curl:latest
+      dockerPull: docker.io/curlimages/curl@sha256:58adaa4e8dca9c988bae2aba4ab3434a0bb2da16bbe3f92dec39ec7785166777
     InlineJavascriptRequirement: {}
     NetworkAccess:
       networkAccess: true
@@ -154,7 +154,7 @@ $graph:
   id: rio_stack
   requirements:
     DockerRequirement:
-      dockerPull: ghcr.io/eoap/how-to/rio:1.0.0
+      dockerPull: ghcr.io/eoap/how-to/rio@sha256:f4b2273ca2383bbf63c14966ad1ee25b35ccd72f73e33339951fdbe894732dbf
     EnvVarRequirement:
       envDef:
         GDAL_TIFF_INTERNAL_MASK: 'YES'
@@ -217,7 +217,7 @@ $graph:
   id: rio_color
   requirements:
     DockerRequirement:
-      dockerPull: ghcr.io/eoap/how-to/rio:1.0.0
+      dockerPull: ghcr.io/eoap/how-to/rio@sha256:f4b2273ca2383bbf63c14966ad1ee25b35ccd72f73e33339951fdbe894732dbf
     InlineJavascriptRequirement: {}
     NetworkAccess:
       networkAccess: true
@@ -275,7 +275,7 @@ $graph:
   doc: 'environment variable: rio color.'
 $namespaces:
   s: https://schema.org/
-s:softwareVersion: 1.0.0
+s:softwareVersion: 2.0.0
 s:codeRepository: https://github.com/eoap/how-to
 s:license: https://spdx.org/licenses/CC-BY-SA-4.0.html
 s:author:

@@ -8,13 +8,15 @@ import tomllib
 from datetime import datetime, timezone
 
 parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--runner', choices=['calrissian', 'cwltool'], default='calrissian')
+parser.add_argument('--output', type=Path, default=Path('/calrissian/how-to'))
 parser.add_argument('--case', help='Run one named case')
 parser.add_argument('--skip', action='append', default=[], help='Skip an already validated case')
 args = parser.parse_args()
 root = Path(__file__).resolve().parents[1]
 config = tomllib.loads((root / 'project.toml').read_text())
 stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
-results = Path('/calrissian/how-to') / stamp
+results = args.output / stamp
 results.mkdir(parents=True, exist_ok=True)
 summary = []
 for workflow in config['workflows']:
@@ -32,6 +34,9 @@ for workflow in config['workflows']:
                    '--tmp-outdir-prefix', str(target / 'job-tmp') + '/', '--outdir', str(target / 'results'),
                    '--usage-report', str(target / 'usage.json'), '--tool-logs-basepath', str(target / 'logs'),
                    str(root / workflow['path']), str(params)]
+        if args.runner == 'cwltool':
+            command = ['cwltool', '--podman', '--outdir', str(target / 'results'),
+                       str(root / workflow['path']), str(params)]
         print(f'Running {name}: {workflow["path"]}', flush=True)
         with (target / 'result.json').open('w') as out, (target / 'execution.log').open('w') as err:
             run = subprocess.run(command, stdout=out, stderr=err, env=os.environ | {'CWLTOOL_OPTIONS':''})

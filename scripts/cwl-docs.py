@@ -52,7 +52,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     for path in sorted(root.rglob('*.cwl')):
-        if path.name.startswith('.'): continue
+        if any(part.startswith('.') for part in path.relative_to(root).parts): continue
         markdown = render(path)
         if args.validate:
             import requests

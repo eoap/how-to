@@ -1,0 +1,9 @@
+# Python 3.12 teaching/acceptance environment; Calrissian uses PDE's isolated venv.
+PyYAML
+rasterio
+requests
+pystac
+ipykernel
+check-jsonschema
+yq
+cwltool

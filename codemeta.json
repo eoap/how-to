@@ -7,10 +7,10 @@
   "datePublished": "2024-12-08",
   "dateModified": "2025-01-02",
   "name": "Earth Observation Application Packages CWL How-To's",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Earth Observation Application Packages CWL How-To's",
   "developmentStatus": "active",
-  "downloadUrl": "https://github.com/eoap/how-to/releases/tag/1.0.0",
+  "downloadUrl": "https://github.com/eoap/how-to/releases/tag/2.0.0",
   "relatedLink": [
     "https://eoap.github.io/how-to/"
   ],

@@ -14,3 +14,6 @@ rbac.yaml
 .task
 project.toml.json
 .pydevproject
+
+.venv/
+acceptance-results/

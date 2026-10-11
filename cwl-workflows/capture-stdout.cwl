@@ -58,7 +58,7 @@ $graph:
       networkAccess: true
     InlineJavascriptRequirement: {}
     DockerRequirement:
-      dockerPull: ghcr.io/eoap/how-to/rio:1.0.0
+      dockerPull: ghcr.io/eoap/how-to/rio@sha256:f4b2273ca2383bbf63c14966ad1ee25b35ccd72f73e33339951fdbe894732dbf
     SchemaDefRequirement:
       types:
       - name: '#URI'
@@ -110,7 +110,7 @@ $graph:
   doc: 'capture stdout: rio.'
 $namespaces:
   s: https://schema.org/
-s:softwareVersion: 1.0.0
+s:softwareVersion: 2.0.0
 s:codeRepository: https://github.com/eoap/how-to
 s:license: https://spdx.org/licenses/CC-BY-SA-4.0.html
 s:author:
