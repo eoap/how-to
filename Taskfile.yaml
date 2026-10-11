@@ -88,3 +88,13 @@ tasks:
       VAR: 9
 
 
+
+  cwl-docs:
+    desc: Validate CWL and generate Markdown documentation
+    cmds:
+    - python scripts/cwl-docs.py --validate
+
+  workflows:kubernetes:
+    desc: Run all configured cases with PDE Calrissian
+    cmds:
+    - python scripts/run-workflows.py

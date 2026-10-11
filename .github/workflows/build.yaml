@@ -1,121 +1,86 @@
-name: build
+name: Acceptance and release
 on:
   push:
-    branches:
-    - main
-    - develop
-
-    paths:
-    - Dockerfile
-    - codemeta.json
-    - .github/**
-
+    branches: [main, develop, feature/pde-typed-cwl]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the accepted stable version from main
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: how-to-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: false
 jobs:
-
-  version:
-
-    runs-on: ubuntu-latest
-
-    outputs:
-
-      app-version: ${{ steps.set-version.outputs.version }}
-
+  acceptance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-    - uses: actions/checkout@v2
-    - run: echo "APP_VERSION=$(cat codemeta.json | jq -r .version )" >> $GITHUB_ENV
-    - run: echo app version is $APP_VERSION
-    - id: set-version
-      run: echo "::set-output name=version::$APP_VERSION"
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install the locked environment and Podman
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman
+          uv venv --python 3.12 .venv
+          uv pip sync --python .venv/bin/python --require-hashes requirements-notebooks.txt
+          uv pip check --python .venv/bin/python
+      - name: Validate release metadata and immutable images
+        run: .venv/bin/python scripts/check-release.py
+      - name: Validate standalone CWL and generated Markdown
+        run: .venv/bin/python scripts/cwl-docs.py --validate --output acceptance-results/cwl-docs
+      - name: Execute all ten cases with real EO inputs
+        run: |
+          source .venv/bin/activate
+          python scripts/run-workflows.py --runner cwltool --output "$GITHUB_WORKSPACE/acceptance-results/workflows"
+      - name: Build documentation strictly
+        run: .venv/bin/mkdocs build --strict --site-dir acceptance-results/site
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acceptance-${{ github.sha }}
+          path: acceptance-results/
 
-  container-build:
-
-    needs: version
-
-    runs-on: ubuntu-latest
-
+  publish:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
+    needs: acceptance
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      packages: write
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
-    - uses: actions/checkout@v2   
-    - run: echo version ${{needs.version.outputs.app-version}}
-    - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-    - name: build & push image
-      run: |
-        IMAGE_ID=ghcr.io/eoap/how-to/rio
-        docker build . --file Dockerfile --tag rio
-        docker tag rio $IMAGE_ID:${{needs.version.outputs.app-version}}
-        docker push $IMAGE_ID:${{needs.version.outputs.app-version}}
-
-  create-release:
-
-    needs:
-    - container-build
-    - version
-
-    runs-on: ubuntu-latest
-
-    outputs:
-
-      upload_url: ${{ steps.set-upload-url.outputs.upload_url }}
-
-    steps:
-    - name: release
-      uses: actions/create-release@v1
-      id: create_release
-      with:
-        draft: false
-        prerelease: false
-        release_name: ${{needs.version.outputs.app-version}}
-        tag_name: ${{needs.version.outputs.app-version}}
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-    - id: set-upload-url
-      run: echo "::set-output name=upload_url::${{ steps.create_release.outputs.upload_url }}"
-
-  publish-artifacts:
-
-    needs:
-    - create-release
-    - version
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        step: ["capture-json-stdout", "capture-stdout", "conditional-workflows", "environment-variable", "nested-workflow", "return-output-file", "runtime-file", "scatter-input-parameters", "scatter-workflows"]
-
-    steps:
-    - uses: actions/checkout@v2
-    - run: |
-        set -x
-        container=rio
-        tag="ghcr.io/eoap/how-to/${container}:${{needs.version.outputs.app-version}}"
-        docker pull ${tag}
-        shatag=$( docker inspect ${tag} | yq -r '.[0]["RepoDigests"][0]' )
-        s="${container}" t="${shatag}" yq -i eval '(.$graph[] | select (.id == env(s)) ).requirements.DockerRequirement.dockerPull = env(t)' cwl-workflows/${{matrix.step}}.cwl
-    - run: |
-        set -x
-        r=$( cat codemeta.json | jq -r ".codeRepository" ) yq -i eval '."s:codeRepository" = {"URL" : env(r)}' cwl-workflows/${{matrix.step}}.cwl
-        v="${{needs.version.outputs.app-version}}" yq -i eval '."s:softwareVersion" = env(v)' cwl-workflows/${{matrix.step}}.cwl
-        n=$(cat codemeta.json | jq -r '(.author[0].givenName + " " + .author[0].familyName)') \
-        e=$(cat codemeta.json | jq -r '.author[0].email') \
-        a=$(cat codemeta.json | jq -r '.author[0].affiliation["name"]') \
-        yq eval -i  '."s:author" += [{"class": "s:Person", "s.name": env(n), "s.email": env(e), "s.affiliation": env(a)}]' cwl-workflows/${{matrix.step}}.cwl
-    - name: Cleanup downloads folder
-      run: rm -rf downloads/*
-    - run: |
-        set -x
-        mkdir downloads
-        cp cwl-workflows/${{matrix.step}}.cwl downloads/${{matrix.step}}.${{needs.version.outputs.app-version}}.cwl
-    - uses: actions/upload-artifact@v4
-      with:
-        name: application-package-${{matrix.step}}
-        path: downloads
-        overwrite: true
-    - name: upload linux artifact 1
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      with:
-        upload_url: ${{needs.create-release.outputs.upload_url}}
-        asset_path: downloads/${{matrix.step}}.${{needs.version.outputs.app-version}}.cwl
-        asset_name: ${{matrix.step}}.${{needs.version.outputs.app-version}}.cwl
-        asset_content_type: text/yaml
+      - uses: actions/checkout@v4
+      - name: Install registry publication tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo
+      - name: Check version has not been published
+        run: |
+          version=$(jq -er .version codemeta.json)
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          gh api "repos/$GITHUB_REPOSITORY/git/matching-refs/tags/$version" --jq '.[].ref' > /tmp/existing-tags
+          if grep -Fxq "refs/tags/$version" /tmp/existing-tags; then
+            echo 'Version already tagged'; exit 1
+          fi
+          if skopeo inspect "docker://ghcr.io/eoap/how-to/rio:$version" >/dev/null 2>&1; then
+            echo 'Image version already published'; exit 1
+          fi
+      - name: Publish the validated runtime without rebuilding it
+        run: |
+          printf '%s' "$GH_TOKEN" | skopeo login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          skopeo copy --all --preserve-digests docker://ghcr.io/eoap/how-to/rio@sha256:f4b2273ca2383bbf63c14966ad1ee25b35ccd72f73e33339951fdbe894732dbf "docker://ghcr.io/eoap/how-to/rio:$VERSION"
+          test "$(skopeo inspect --format '{{.Digest}}' "docker://ghcr.io/eoap/how-to/rio:$VERSION")" = sha256:f4b2273ca2383bbf63c14966ad1ee25b35ccd72f73e33339951fdbe894732dbf
+      - name: Stage unchanged validated CWL and checksums
+        run: |
+          mkdir release-assets
+          cp cwl-workflows/*.cwl requirements-notebooks.txt project.toml release-assets/
+          cd release-assets
+          sha256sum *.cwl requirements-notebooks.txt project.toml > SHA256SUMS
+      - name: Publish the stable release after all assets are ready
+        run: |
+          gh release create "$VERSION" release-assets/* --target "$GITHUB_SHA" --title "CWL How-To $VERSION" --notes-file RELEASE_NOTES.md
