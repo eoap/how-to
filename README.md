@@ -66,8 +66,12 @@ The current user's UID/GID is inherited by Calrissian task pods.
 
 Use the sibling dev-platform-eoap how-to deployment tasks for readiness,
 editor/S3 checks, and environment initialization on a selected Kubernetes
-context. Publish `feature/pde-typed-cwl` before a fresh remote clone can use it.
+context. Published releases include all standalone documents and typed test jobs.
 
 AMD64 Kubernetes acceptance on 11 October 2026 passed all ten workflow cases,
 standalone metadata/Markdown validation and deployment lifecycle checks.
 The CRS enum value `EPSG4326` binds to rasterio's `EPSG:4326` CLI value.
+
+## Reproducible release acceptance
+
+Install the Python 3.12 environment with `uv pip sync --require-hashes requirements-notebooks.txt`. Run `scripts/check-release.py` and `scripts/cwl-docs.py --validate`, then execute all ten cases with `python scripts/run-workflows.py`. Calrissian is the default; CI uses `--runner cwltool --output /tmp/how-to-acceptance` with Podman. Both use the same typed inputs in `project.toml` and pinned runtime images. Documentation notebooks use those typed jobs as well.
