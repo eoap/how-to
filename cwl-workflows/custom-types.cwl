@@ -13,12 +13,7 @@ $graph:
     SubworkflowFeatureRequirement: {}
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI identifying a remote STAC item.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#CRS'
         type: enum
         symbols:
@@ -50,7 +45,7 @@ $graph:
       label: Sentinel-2 STAC items
       doc: list of Sentinel-2 COG STAC items
       type:
-        items: '#URI'
+        items: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
         type: array
     bands:
       label: bands used for the NDWI
@@ -95,12 +90,7 @@ $graph:
     ScatterFeatureRequirement: {}
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI identifying a remote STAC item.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#CRS'
         type: enum
         symbols:
@@ -136,7 +126,7 @@ $graph:
       label: bands
     item:
       doc: STAC item
-      type: '#URI'
+      type: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       label: item
   outputs:
   - id: detected_water_body
@@ -176,12 +166,7 @@ $graph:
     InlineJavascriptRequirement: {}
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI identifying a remote STAC item.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#CRS'
         type: enum
         symbols:
@@ -227,7 +212,7 @@ $graph:
       }\n"
   inputs:
     item:
-      type: '#URI'
+      type: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       inputBinding:
         prefix: --input-item
         valueFrom: $( inputs.item.value )
@@ -272,12 +257,7 @@ $graph:
       ramMax: 2048
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI identifying a remote STAC item.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#CRS'
         type: enum
         symbols:
@@ -339,12 +319,7 @@ $graph:
       ramMax: 2048
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI identifying a remote STAC item.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#CRS'
         type: enum
         symbols:
@@ -397,12 +372,7 @@ $graph:
     InlineJavascriptRequirement: {}
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI identifying a remote STAC item.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#CRS'
         type: enum
         symbols:
@@ -448,7 +418,7 @@ $graph:
     item:
       type:
         type: array
-        items: '#URI'
+        items: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       label: item
       doc: item for water-body detection.
     rasters:

@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27,<2"]
 build-backend = "hatchling.build"
 
 [project]
@@ -9,27 +9,69 @@ description = "Application Package CWL How-To's"
 readme = "README.md"
 license = "CC-BY-SA-4.0"
 keywords = []
+requires-python = ">=3.12,<3.13"
+dependencies = ["rasterio==1.5.2", "rio-color==2.0.1", "numpy==2.5.4", "click==8.5.0"]
+classifiers = ["Development Status :: 4 - Beta", "Environment :: Console", "Intended Audience :: Developers", "Programming Language :: Python", "Programming Language :: Python :: Implementation :: PyPy"]
 
-authors = [
-    { name = "Fabrice Brito", email = "fabrice.brito@terradue.com" }
-]
-requires-python = ">=3.11"
-dependencies = [
-    "PyYAML",
-    "cwltool",
-    "ipykernel",
-    "bash_kernel",
-]
-classifiers = [
-  "Development Status :: 4 - Beta",
-  "Environment :: Console",
-  "Intended Audience :: Developers",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: Implementation :: PyPy"
-]
+[[project.authors]]
+name = "Fabrice Brito"
+email = "fabrice.brito@terradue.com"
+
+[project.urls]
+Documentation = "https://eoap.github.io/how-to/"
+Source = "https://github.com/eoap/how-to"
+Issues = "https://github.com/eoap/how-to/issues"
 
 [tool.hatch.version]
 path = "about.py"
 
 [tool.hatch.envs.default]
-python = "3.11"
+template = "dev"
+skip-install = false
+pre-install-commands = ["uv pip install --require-hashes -r requirements/development.txt"]
+post-install-commands = ["uv pip install --no-deps --no-build-isolation -e ."]
+
+[tool.hatch.envs.dev]
+template = "dev"
+python = "3.12"
+skip-install = true
+installer = "uv"
+post-install-commands = ["uv pip install --require-hashes -r requirements/development.txt", "uv pip install --no-deps --no-build-isolation -e ."]
+
+[tool.hatch.envs.dev.scripts]
+bootstrap = ["uv pip install --require-hashes -r requirements/development.txt", "uv pip install --no-deps --no-build-isolation -e ."]
+check = ["bootstrap", "format-check", "lint-check", "typecheck", "security"]
+format-check = "ruff format --check how_to scripts tests"
+lint-check = "ruff check how_to scripts tests"
+typecheck = "mypy how_to scripts"
+security = "bandit -r how_to scripts -ll"
+
+[tool.hatch.envs.test]
+template = "dev"
+
+[tool.hatch.envs.test.scripts]
+test = ["bootstrap", "pytest -q", "python scripts/check-release.py", "python scripts/cwl-docs.py --validate {args}"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["how_to"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/how_to", "/about.py", "/pyproject.toml", "/README.md", "/LICENSE*", "/scripts", "/cwl-workflows", "/requirements", "/project.toml", "/tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B", "C4", "SIM", "C90"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.mypy]
+ignore_missing_imports = true
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--import-mode=importlib"

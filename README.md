@@ -79,3 +79,21 @@ The custom-types case additionally checks three STAC items, binary water masks, 
 Install the Python 3.12 environment with `uv pip sync --require-hashes requirements-notebooks.txt`. Run `scripts/check-release.py` and `scripts/cwl-docs.py --validate`, then execute all eleven cases with `python scripts/run-workflows.py`. Calrissian is the default; CI uses `--runner cwltool --output /tmp/how-to-acceptance` with Podman. Both use the same typed inputs in `project.toml` and pinned runtime images. Documentation notebooks use those typed jobs as well.
 
 Documentation builds render notebook instructions without executing remote processing. The acceptance workflow executes the eleven real-data cases separately and saves their results and logs.
+
+## Locked package and runtime checks
+
+The course distribution uses Hatchling with Python 3.12. Runtime dependencies
+provide the official Rasterio/rio-color CLI; notebook and acceptance tools are
+kept in the hash-locked development environment. Run `hatch run dev:check` and
+`hatch run test:test` for quality, scoped release-rewriting regressions and the
+standalone CWL documentation contract. The Rocky Linux 10.1 builder builds the
+course wheel and native dependency wheels; the separate runtime runs as `neo`
+(UID/GID 2000), checks its dependencies and CLI, and removes venv pip.
+
+Release acceptance builds the intended runtime and tests all eleven workflow
+cases using a temporary runtime-reference override. Shared Mastering images and
+published schema imports remain unchanged. Successful CI retains that image as
+an artifact; publication loads and pushes it without rebuilding, then creates
+digest-pinned standalone release documents. Preparation does not promote a
+stable release: real-data case acceptance and the next release version must be
+settled first.

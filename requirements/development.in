@@ -1,0 +1,24 @@
+-r runtime.in
+-c ../requirements-notebooks.txt
+# Python 3.12 teaching/acceptance environment; Calrissian uses PDE's isolated venv.
+PyYAML
+rasterio
+requests
+pystac
+ipykernel
+check-jsonschema
+yq
+cwltool
+mkdocs-material
+mkdocs-mermaid2-plugin
+mkdocs-jupyter
+bash_kernel
+
+hatch==1.18.1
+hatchling>=1.27,<2
+editables>=0.5,<1
+uv
+pytest
+ruff
+mypy
+bandit
