@@ -37,7 +37,7 @@ jobs:
           source .venv/bin/activate
           python scripts/run-workflows.py --runner cwltool --output "$GITHUB_WORKSPACE/acceptance-results/workflows"
       - name: Build documentation strictly
-        run: uv run --no-project --python 3.12 --with mkdocs-material mkdocs build --strict --site-dir acceptance-results/site
+        run: uv run --no-project --python 3.12 --with mkdocs-material --with mkdocs-mermaid2-plugin mkdocs build --strict --site-dir acceptance-results/site
       - uses: actions/upload-artifact@v4
         if: always()
         with:
