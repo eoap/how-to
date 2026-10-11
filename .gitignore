@@ -17,3 +17,8 @@ project.toml.json
 
 .venv/
 acceptance-results/
+
+__pycache__/
+*.pyc
+.hatch/
+dist/
