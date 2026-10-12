@@ -10,12 +10,7 @@ $graph:
     ScatterFeatureRequirement: {}
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI of the remote resource.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#SpectralBand'
         type: enum
         symbols:
@@ -35,7 +30,7 @@ $graph:
           doc: Serialized JSON object.
   inputs:
     stac-item:
-      type: '#URI'
+      type: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       label: stac item
       doc: stac item.
     bands:
@@ -73,12 +68,7 @@ $graph:
     ScatterFeatureRequirement: {}
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI of the remote resource.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#SpectralBand'
         type: enum
         symbols:
@@ -98,7 +88,7 @@ $graph:
           doc: Serialized JSON object.
   inputs:
     stac-item:
-      type: '#URI'
+      type: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       label: stac item
       doc: stac item.
     bands:
@@ -149,12 +139,7 @@ $graph:
       networkAccess: true
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI of the remote resource.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#SpectralBand'
         type: enum
         symbols:
@@ -182,7 +167,7 @@ $graph:
   - $( inputs.stac_item.value )
   inputs:
     stac_item:
-      type: '#URI'
+      type: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       label: stac item
       doc: stac item.
     common_band_name:
@@ -191,7 +176,7 @@ $graph:
       doc: common band name.
   outputs:
     hrefs:
-      type: '#URI'
+      type: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       outputBinding:
         glob: message
         loadContents: true
@@ -229,12 +214,7 @@ $graph:
       networkAccess: true
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI of the remote resource.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#SpectralBand'
         type: enum
         symbols:
@@ -265,7 +245,7 @@ $graph:
     tiffs:
       type:
         type: array
-        items: '#URI'
+        items: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       label: tiffs
       doc: tiffs.
   outputs:
@@ -287,12 +267,7 @@ $graph:
       networkAccess: true
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI of the remote resource.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#SpectralBand'
         type: enum
         symbols:

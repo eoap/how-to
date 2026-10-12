@@ -8,12 +8,7 @@ $graph:
       networkAccess: true
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI of the remote resource.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#SpectralBand'
         type: enum
         symbols:
@@ -33,7 +28,7 @@ $graph:
           doc: Serialized JSON object.
   inputs:
     stac-item:
-      type: '#URI'
+      type: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       label: stac item
       doc: stac item.
     common-band-name:
@@ -78,12 +73,7 @@ $graph:
       networkAccess: true
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI of the remote resource.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#SpectralBand'
         type: enum
         symbols:
@@ -111,7 +101,7 @@ $graph:
   - $( inputs.stac_item.value )
   inputs:
     stac_item:
-      type: '#URI'
+      type: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       label: stac item
       doc: stac item.
   stdout: message
@@ -136,12 +126,7 @@ $graph:
       networkAccess: true
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI of the remote resource.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#SpectralBand'
         type: enum
         symbols:

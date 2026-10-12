@@ -1,0 +1,11 @@
+{
+  "source_commit": "03dba149fe520f43d137d7bfdf7fc8c11fa29949",
+  "cluster": "eoap-mastering-app-package-docker",
+  "namespace": "eoap-how-to",
+  "processing_runtime_user": 2000,
+  "published_candidate_acceptance_passed": false,
+  "real_cases_passed": 11,
+  "processing_image": "eoap-howto-rio-color:rocky-03dba14",
+  "evidence_directory": "/calrissian/howto-rocky-03dba14/20261011T233536Z",
+  "mastering_staging": "published images retained unchanged"
+}

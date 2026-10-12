@@ -26,8 +26,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y podman
           uv venv --python 3.12 .venv
-          uv pip sync --python .venv/bin/python --require-hashes requirements-notebooks.txt
+          uv pip sync --python .venv/bin/python --require-hashes requirements/development.txt
+          uv pip install --python .venv/bin/python --no-deps --no-build-isolation -e .
           uv pip check --python .venv/bin/python
+      - name: Check the locked Hatch development environment
+        run: .venv/bin/hatch run dev:check
+      - name: Build the intended processing runtime
+        run: |
+          docker build -t localhost/how-to-rio:${{ github.sha }} .
+          docker run --rm localhost/how-to-rio:${{ github.sha }} rio color --help
+          docker save localhost/how-to-rio:${{ github.sha }} -o /tmp/how-to-runtime.tar
+          podman load -i /tmp/how-to-runtime.tar
       - name: Validate release metadata and immutable images
         run: .venv/bin/python scripts/check-release.py
       - name: Validate standalone CWL and generated Markdown
@@ -35,9 +44,13 @@ jobs:
       - name: Execute all eleven cases with real EO inputs
         run: |
           source .venv/bin/activate
-          python scripts/run-workflows.py --runner cwltool --output "$GITHUB_WORKSPACE/acceptance-results/workflows"
+          python scripts/run-workflows.py --runner cwltool --processing-image "localhost/how-to-rio:${{ github.sha }}" --output "$GITHUB_WORKSPACE/acceptance-results/workflows"
       - name: Build documentation strictly
         run: .venv/bin/mkdocs build --strict --site-dir acceptance-results/site
+      - uses: actions/upload-artifact@v4
+        with:
+          name: runtime-${{ github.sha }}
+          path: /tmp/how-to-runtime.tar
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -70,17 +83,30 @@ jobs:
           if skopeo inspect "docker://ghcr.io/eoap/how-to/rio:$version" >/dev/null 2>&1; then
             echo 'Image version already published'; exit 1
           fi
-      - name: Publish the validated runtime without rebuilding it
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/download-artifact@v4
+        with:
+          name: runtime-${{ github.sha }}
+          path: accepted-runtime
+      - name: Publish the accepted image without rebuilding
         run: |
-          printf '%s' "$GH_TOKEN" | skopeo login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
-          skopeo copy --all --preserve-digests docker://ghcr.io/eoap/how-to/rio@sha256:f4b2273ca2383bbf63c14966ad1ee25b35ccd72f73e33339951fdbe894732dbf "docker://ghcr.io/eoap/how-to/rio:$VERSION"
-          test "$(skopeo inspect --format '{{.Digest}}' "docker://ghcr.io/eoap/how-to/rio:$VERSION")" = sha256:f4b2273ca2383bbf63c14966ad1ee25b35ccd72f73e33339951fdbe894732dbf
-      - name: Stage unchanged validated CWL and checksums
+          docker load -i accepted-runtime/how-to-runtime.tar
+          printf '%s' "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          docker tag localhost/how-to-rio:${{ github.sha }} "ghcr.io/eoap/how-to/rio:$VERSION"
+          docker push "ghcr.io/eoap/how-to/rio:$VERSION"
+          docker pull "ghcr.io/eoap/how-to/rio:$VERSION"
+          docker inspect "ghcr.io/eoap/how-to/rio:$VERSION" --format '{{index .RepoDigests 0}}' > /tmp/accepted-image
+      - name: Prepare and validate the digest-pinned standalone release assets
         run: |
-          mkdir release-assets
-          cp cwl-workflows/*.cwl cwl-workflows/custom-types.yaml requirements-notebooks.txt project.toml release-assets/
+          uv venv --python 3.12 .venv
+          uv pip install --require-hashes -r requirements/development.txt
+          uv pip install --no-deps --no-build-isolation -e .
+          .venv/bin/python scripts/prepare-runtime-release.py --image "$(cat /tmp/accepted-image)" --output release-assets
+          for document in release-assets/*.cwl; do .venv/bin/cwltool --validate "$document"; done
+          cp cwl-workflows/custom-types.yaml requirements-notebooks.txt project.toml release-assets/
+          cp requirements/development.txt requirements/runtime.txt release-assets/
           cd release-assets
-          sha256sum *.cwl custom-types.yaml requirements-notebooks.txt project.toml > SHA256SUMS
+          sha256sum * > SHA256SUMS
       - name: Publish the stable release after all assets are ready
         run: |
           gh release create "$VERSION" release-assets/* --target "$GITHUB_SHA" --title "CWL How-To $VERSION" --notes-file RELEASE_NOTES.md

@@ -4,7 +4,7 @@ $graph:
   id: main
   inputs:
     tif:
-      type: '#URI'
+      type: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       label: URL to a Sentinel-2 TCI GeoTIFF
       doc: URL to a Sentinel-2 True Colour Image GeoTIFF file (TCI.tif)
   outputs:
@@ -26,12 +26,7 @@ $graph:
       networkAccess: true
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI of the remote resource.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#SpectralBand'
         type: enum
         symbols:
@@ -63,12 +58,7 @@ $graph:
       dockerPull: ghcr.io/eoap/how-to/rio@sha256:f4b2273ca2383bbf63c14966ad1ee25b35ccd72f73e33339951fdbe894732dbf
     SchemaDefRequirement:
       types:
-      - name: '#URI'
-        type: record
-        fields:
-        - name: value
-          type: string
-          doc: URI of the remote resource.
+      - $import: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml
       - name: '#SpectralBand'
         type: enum
         symbols:
@@ -100,7 +90,7 @@ $graph:
   - preview.png
   inputs:
     geotif:
-      type: '#URI'
+      type: https://raw.githubusercontent.com/eoap/schemas/main/string_format.yaml#URI
       label: geotif
       doc: geotif.
   outputs:
